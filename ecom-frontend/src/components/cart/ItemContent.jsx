@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import {useState } from "react";
 import _defaultProductImg from "../../assets/sliders/s_2.webp";
 import SetQuantity from "./SetQuantity";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,8 @@ import {
   increaseCartQuantity,
   removeFromCart,
 } from "../../store/actions";
+import formatPrice from "../../utils/formatPrice";
+import truncateText from "../../utils/truncateText";
 
 const ItemContent = ({
   productId,
@@ -65,7 +67,7 @@ const ItemContent = ({
       <div className="md:col-span-2 justify-self-start flex flex-col gap-2">
         <div className="flex md:flex-row flex-col lg:gap-4 sm:gap-3 gap-0 items-start p-3">
           <h3 className="lg:text-[17px] text-lg font-semibold text-slate-800">
-            {productName}
+            {truncateText(productName)}
           </h3>
         </div>
 
@@ -90,7 +92,7 @@ const ItemContent = ({
         </div>
       </div>
       <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold ">
-        {Number(specialPrice).toFixed(2)}
+        {formatPrice(Number(specialPrice).toFixed(2))}
       </div>
       <div className="justify-self-center">
         <SetQuantity
@@ -101,7 +103,7 @@ const ItemContent = ({
         />
       </div>
       <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold ">
-        {(Number(currentQuantity) * Number(specialPrice)).toFixed(2)}
+        {formatPrice((Number(currentQuantity) * Number(specialPrice)).toFixed(2))}
       </div>
     </div>
   );
