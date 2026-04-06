@@ -181,16 +181,106 @@ export const registerNewUser =
       navigate("/login");
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || error?.response?.data?.password|| "Internal Server Error!");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.password ||
+          "Internal Server Error!",
+      );
     } finally {
       setLoader(false);
     }
   };
 
-  export const logoutUser = (navigate) => (dispatch) => {
+export const logoutUser = (navigate) => (dispatch) => {
+  dispatch({
+    type: "LOG_OUT",
+  });
+  localStorage.removeItem("auth");
+  navigate("/login");
+};
+
+export const addUpdateUserAddress =
+  (sendData, toast, addressID, setOpenAddressModal) =>
+  async (dispatch, getState) => {
+    // const {user} = getState().auth;
     dispatch({
-      type : "LOG_OUT"
-    })
-    localStorage.removeItem("auth")
-    navigate("/login")
+      type: "BUTTON_LOADER",
+    });
+    try {
+      if (!addressID) {
+        const { data } = await api.post("/addresses", sendData);
+      } else {
+        await api.put(`/addresses/${addressID}`, sendData);
+      }
+      dispatch(fetchUserAddresses());
+      toast.success("Address saved successfully!");
+      dispatch({
+        type: "IS_SUCCESS",
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Internal Server Error!");
+      dispatch({
+        type: "IS_ERROR",
+        payload: null,
+      });
+    } finally {
+      setOpenAddressModal(false);
+    }
+  };
+
+export const fetchUserAddresses = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get(`/addresses`);
+    dispatch({
+      type: "USER_ADDRESS",
+      payload: data,
+    });
+    dispatch({ type: "IS_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "IS_ERROR",
+      payload:
+        error?.response?.data?.message || "Failed to fetch user addresses",
+    });
   }
+};
+
+export const selectUserCheckoutAddress = (address) => {
+  return {
+    type: "SELECT_CHECKOUT_ADDRESS",
+    payload: address,
+  };
+};
+
+export const deleteUserAddress =
+  (toast, addressID, setOpenDeleteModal) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: "BUTTON_LOADER" });
+      const {data} = await api.delete(`/addresses/${addressID}`);
+      console.log(data);
+      
+      removeCheckoutAddress();
+      dispatch(fetchUserAddresses());
+      toast.success("Address deleted successfully!");
+      dispatch({
+        type: "IS_SUCCESS",
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: "IS_ERROR",
+        payload: error?.response?.data?.message || "Some Error Occured!",
+      });
+    } finally {
+      setOpenDeleteModal(false);
+    }
+  };
+
+export const removeCheckoutAddress = () => {
+  return {
+    type: "REMOVE_CHECKOUT_ADDRESS",
+  };
+};

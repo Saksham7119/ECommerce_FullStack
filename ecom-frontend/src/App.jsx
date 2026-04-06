@@ -11,6 +11,7 @@ import Cart from "./components/cart/Cart";
 import { Login } from "./components/auth/Login";
 import { PrivateRoutes } from "./components/PrivateRoutes";
 import { Register } from "./components/auth/Register";
+import { Checkout } from "./components/checkout/Checkout";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -25,6 +26,10 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/" element={<PrivateRoutes />}>
+            <Route path="/checkout" element={<Checkout />} />
+          </Route>
+
           <Route path="/" element={<PrivateRoutes publicPage />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

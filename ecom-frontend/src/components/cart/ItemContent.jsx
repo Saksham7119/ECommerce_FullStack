@@ -31,6 +31,8 @@ const ItemContent = ({
     cartFromRedux?.quantity || quantity,
   );
   const dispatch = useDispatch();
+  console.log(specialPrice);
+  
 
   const buildCartItem = (qty) => ({
     productId,
@@ -63,7 +65,7 @@ const ItemContent = ({
   };
 
   return (
-    <div className="grid md:grid-cols-5 grid-cols-4 md:text-md text-sm gap-4 items-center border-[1px] border-slate-400 my-2">
+    <div className="grid md:grid-cols-5 grid-cols-4 md:text-md text-sm gap-4 items-center border-[1px] border-slate-400 my-2 bg-slate-100 rounded-lg">
       <div className="md:col-span-2 justify-self-start flex flex-col gap-2">
         <div className="flex md:flex-row flex-col lg:gap-4 sm:gap-3 gap-0 items-start p-3">
           <h3 className="lg:text-[17px] text-lg font-semibold text-slate-800">
@@ -103,8 +105,7 @@ const ItemContent = ({
         />
       </div>
       <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold ">
-        {formatPrice((Number(currentQuantity) * Number(specialPrice)).toFixed(2))}
-      </div>
+        {formatPrice((Number(currentQuantity) * Number(specialPrice)).toFixed(2))} </div>
     </div>
   );
 };
