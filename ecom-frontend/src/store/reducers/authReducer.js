@@ -1,7 +1,10 @@
+import { selectUserCheckoutAddress } from "../actions";
+
 const initialState = {
   user: null,
   address: [],
-  selectedUserAddress: null,
+  clientSecret: null,
+  selectedUserCheckoutAddress: null,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -13,22 +16,33 @@ const authReducer = (state = initialState, action) => {
       };
     case "LOG_OUT":
       return {
-        user : null,
-        address : null
+        user: null,
+        address: null,
       };
     case "USER_ADDRESS":
       return {
         ...state,
-        address : action.payload
+        address: action.payload,
       };
     case "SELECT_CHECKOUT_ADDRESS":
       return {
         ...state,
-        selectedUserCheckoutAddress : action.payload
+        selectedUserCheckoutAddress: action.payload,
       };
     case "REMOVE_CHECKOUT_ADDRESS":
       return {
         ...state,
+        selectedUserCheckoutAddress: null,
+      };
+      case "CLIENT_SECRET":
+      return {
+        ...state,
+        clientSecret: action.payload,
+      };
+      case "REMOVE_CLIENT_SECRET_ADDRESS":
+      return {
+        ...state,
+        clientSecret: null,
         selectedUserCheckoutAddress : null
       };
     default:

@@ -22,7 +22,7 @@ const ItemContent = ({
   quantity,
   cartId,
 }) => {
-  console.log("PRO:" + productId);
+  // console.log("PRO:" + productId);
   const cartFromRedux = useSelector((state) =>
     state.carts.cart.find((item) => item.productId === productId),
   );
@@ -31,7 +31,7 @@ const ItemContent = ({
     cartFromRedux?.quantity || quantity,
   );
   const dispatch = useDispatch();
-  console.log(specialPrice);
+  // console.log(specialPrice);
   
 
   const buildCartItem = (qty) => ({
@@ -83,7 +83,7 @@ const ItemContent = ({
           <div className="flex items-start gap-5 mt-3">
             <button
               onClick={() => {
-                console.log(productId);
+                // console.log(productId);
                 removeItemFromCart();
               }}
               className="flex items-center font-semibold space-x-2 mx-3 mb-3 px-4 py-2 text-xs text-white rounded-md bg-rose-600 hover:bg-red-400 transition-colors duration-300"

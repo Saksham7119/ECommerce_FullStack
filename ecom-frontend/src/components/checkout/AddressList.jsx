@@ -47,7 +47,8 @@ export const AddressList = ({
         return (
           <div
             key={addr.addressID}
-            onClick={() => handleAddressSelection(addr)}
+            onClick={() => {handleAddressSelection(addr)
+            }}
             className={`
               cursor-pointer
               border

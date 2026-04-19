@@ -32,7 +32,9 @@ export const AddressInfo = ({ address }) => {
   }
 
   useEffect(() => {
-  console.log("Updated Address State:", selectedAddress);
+  console.log("SELECTED ADDRESS:", selectedAddress);
+  // console.log(address);
+  
 }, [selectedAddress]);
 
   return (
@@ -73,10 +75,7 @@ export const AddressInfo = ({ address }) => {
             <div className=" pt-6 w-full">
               <AddressList
                 address={address}
-                // setSelectedAddress={setSelectedAddress}
-                setSelectedAddress={(val) => {
-                  setSelectedAddress(val);
-                }}
+                setSelectedAddress={setSelectedAddress}
                 setOpenAddressModal={setOpenAddressModal}
                 setOpenDeleteModal={setOpenDeleteModal}
               />
