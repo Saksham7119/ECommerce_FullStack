@@ -8,7 +8,7 @@ import {
   increaseCartQuantity,
   removeFromCart,
 } from "../../store/actions";
-import formatPrice from "../../utils/formatPrice";
+import {formatPrice} from "../../utils/formatPrice";
 import truncateText from "../../utils/truncateText";
 
 const ItemContent = ({
