@@ -107,7 +107,7 @@ const AdminLayout = () => {
       <div className="hidden xl:fixed xl:inset-y-0 xl:z-40 xl:flex xl:w-72 xl:flex-col">
         <Sidebar />
       </div>
-      <div className="flex flex-1 flex-col xl:pl-72">
+      <div className="flex flex-1 flex-col xl:pl-72 min-w-0 overflow-x-hidden">
         <header className="sticky top-0 z-30 flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 shadow-sm xl:hidden">
           <button
             type="button"
@@ -123,8 +123,8 @@ const AdminLayout = () => {
 
           <div className="w-8" />
         </header>
-        <main className="flex-1">
-          <div className="p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 min-w-0 overflow-x-hidden">
+          <div className="p-4 sm:p-6 lg:p-8 overflow-x-auto">
             <Outlet />
           </div>
         </main>

@@ -1,12 +1,17 @@
 package com.ecommerce.project.controller;
 
-import com.ecommerce.project.payload.OrderDTO;
-import com.ecommerce.project.payload.OrderRequestDTO;
+import com.ecommerce.project.config.AppConstant;
+import com.ecommerce.project.payload.*;
+import com.ecommerce.project.security.services.UserDetailsImpl;
 import com.ecommerce.project.service.OrderService;
+import com.ecommerce.project.service.StripeService;
 import com.ecommerce.project.util.AuthUtil;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +22,9 @@ public class OrderController {
 
     @Autowired
     private AuthUtil authUtil;
+
+    @Autowired
+    private StripeService stripeService;
 
     @PostMapping("/order/users/payments/{paymentMethod}")
     public ResponseEntity<OrderDTO> orderProducts(@PathVariable String paymentMethod,
@@ -31,7 +39,33 @@ public class OrderController {
                 orderRequestDTO.getPgStatus(),
                 orderRequestDTO.getPgResponseMessage()
         );
-
+    
         return new ResponseEntity<OrderDTO>(orderDTO , HttpStatus.CREATED);
     }
-}
+
+    @PostMapping("/order/stripe-client-secret")
+    public ResponseEntity<String> createStripeClientSecret(@RequestBody StripePaymentDTO stripePaymentDTO) throws StripeException {
+        System.out.println("StripePaymentDTO Recieved " + stripePaymentDTO);
+        PaymentIntent paymentIntent = stripeService.paymentIntent(stripePaymentDTO);
+        return new ResponseEntity<>(paymentIntent.getClientSecret() , HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/orders")
+    public ResponseEntity<OrderResponse> getAllOrders(@RequestParam(name = "keyword" , required = false) String keyword,
+                                                      @RequestParam(name = "category" , required = false) String category,
+                                                      @RequestParam(name = "pageNumber" , defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber ,
+                                                      @RequestParam(name = "pageSize" , defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
+                                                      @RequestParam(name = "sortBy", defaultValue = AppConstant.SORT_ORDER_BY, required = false) String sortBy ,
+                                                      @RequestParam(name = "sortOrder", defaultValue = AppConstant.SORT_DIR, required = false) String sortOrder){
+        OrderResponse response = orderService.getAllOrders(pageNumber , pageSize ,sortBy , sortOrder, keyword , category);
+        return new ResponseEntity<>(response , HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/orders/{orderId}/status")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId ,
+                                                      @RequestBody OrderStatusUpdateDTO orderStatusUpdateDTO){
+        OrderDTO orderDTO = orderService.updateOrder(orderId , orderStatusUpdateDTO.getStatus());
+
+        return new ResponseEntity<OrderDTO>(orderDTO , HttpStatus.OK);
+    }
+}   

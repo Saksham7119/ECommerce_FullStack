@@ -69,9 +69,14 @@ public class ProductServiceImpl implements ProductService{
             Product product = modelMapper.map(productDTO, Product.class);
             product.setImage("default.png");
             product.setCategory(category);
-            double specialPrice =
-                    product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
-            product.setSpecialPrice(specialPrice);
+            if(product.getDiscount() > 100){
+                throw new APIException("Product Discount cannot be more than 100%");
+            }
+            else {
+                double specialPrice =
+                        product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
+                product.setSpecialPrice(specialPrice);
+            }
             Product savedProduct = productRepository.save(product);
             return modelMapper.map(savedProduct, ProductDTO.class);
         }
@@ -88,7 +93,7 @@ public class ProductServiceImpl implements ProductService{
 
         Pageable pageable = PageRequest.of(pageNumber , pageSize , sortByAndOrder);
 
-        Specification<Product> spec = Specification.where(null);
+        Specification<Product> spec = Specification.where(null);    
 
         if(keyword != null && !keyword.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
@@ -212,6 +217,40 @@ public class ProductServiceImpl implements ProductService{
 
         Product product = productRepository.save(productFromDB);
         return modelMapper.map(product , ProductDTO.class);
+    }
+
+    @Override
+    public ProductResponse getAllProductsForAdmin(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ?Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber , pageSize , sortByAndOrder);
+
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        List<Product> products = productPage.getContent();
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> {
+                            ProductDTO productDTO = modelMapper.map(product , ProductDTO.class);
+                            productDTO.setImage(constructImageUrl(product.getImage()));
+                            return productDTO;
+                        }
+                )
+                .toList();
+
+        if(products.isEmpty())
+            throw new APIException("No Products Exists");
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        productResponse.setPageNumber(productPage.getNumber());
+        productResponse.setPageSize(productPage.getSize());
+        productResponse.setTotalElements(productPage.getTotalElements());
+        productResponse.setTotalpages(productPage.getTotalPages());
+        productResponse.setLastPage(productPage.isLast());
+
+        return productResponse;
     }
 
     public String constructImageUrl(String imageName){

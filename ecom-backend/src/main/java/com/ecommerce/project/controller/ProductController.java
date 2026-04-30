@@ -33,6 +33,18 @@ public class ProductController {
        return new ResponseEntity<>(productResponse , HttpStatus.OK);
     }
 
+    @GetMapping("/admin/products")
+    public ResponseEntity<ProductResponse> getAllProductsForAdmin(
+            @RequestParam(name = "pageNumber" , defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber ,
+            @RequestParam(name = "pageSize" , defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstant.SORT_PRODUCTS_BY, required = false) String sortBy ,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstant.SORT_DIR, required = false) String sortOrder
+
+    ){
+        ProductResponse productResponse = productService.getAllProductsForAdmin(pageNumber , pageSize ,sortBy , sortOrder);
+        return new ResponseEntity<>(productResponse , HttpStatus.OK);
+    }
+
     @GetMapping("/public/categories/{categoryId}/products")
     public ResponseEntity<ProductResponse> getAllProductsByCategory(@PathVariable Long categoryId){
         ProductResponse productResponse = productService.getAllProductsByCategory(categoryId);

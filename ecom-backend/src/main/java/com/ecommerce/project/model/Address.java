@@ -19,7 +19,7 @@ import java.util.List;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer addressID;
+    private Long addressID;
 
     @NotBlank
     @Size(min = 5 , message = "Street name must be atleast 5 characters")
@@ -50,7 +50,7 @@ public class Address {
     @ToString.Exclude
     private User user;
 
-    public Address(Integer addressID, String street, String buldingName, String city, String state, String country, String pincode) {
+    public Address(Long addressID, String street, String buldingName, String city, String state, String country, String pincode) {
         this.addressID = addressID;
         this.street = street;
         this.buildingName = buldingName;

@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
@@ -56,10 +53,24 @@ public class JwtUtils {
                 .path("/api")
                 .maxAge(24*60*60)
                 .httpOnly(false)
+                .secure(false)
+                .sameSite("Lax")
                 .build();
 
         return cookie;
     }
+
+//    public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
+//        String jwt = generateTokenFromUsername(userDetails.getUsername());
+//        ResponseCookie cookie = ResponseCookie.   from(jwtCookie, jwt)
+//                .path("/")          // ✅ Sent with ALL requests
+//                .maxAge(24 * 60 * 60)
+//                .httpOnly(true)     // ✅ More secure - JS can't read it
+//                .secure(false)      // keep false for localhost
+//                .sameSite("Lax")
+//                .build();
+//        return cookie;
+//    }
 
     public ResponseCookie getCleanJwtCookie(UserDetailsImpl userDetails){
         ResponseCookie cookie = ResponseCookie.from(jwtCookie , null)
@@ -68,6 +79,13 @@ public class JwtUtils {
 
         return cookie;
     }
+
+//    public ResponseCookie getCleanJwtCookie(UserDetailsImpl userDetails) {
+//        return ResponseCookie.from(jwtCookie, null)
+//                .path("/")          // ✅ Must match generateJwtCookie path
+//                .maxAge(0)
+//                .build();
+//    }
 
     public String generateTokenFromUsername(String username) {
         return Jwts.builder()
@@ -81,8 +99,10 @@ public class JwtUtils {
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                 .verifyWith((SecretKey) key())
-                .build().parseSignedClaims(token)
-                .getPayload().getSubject();
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
     private Key key() {
